@@ -6,9 +6,11 @@ from telegram.ext import Updater, MessageHandler, CommandHandler
 from core import Core
 from messagefilters import MessageFilters
 from enum import Enum
-
-
+from db import DatabaseHandler
+from pathlib import Path
 # Принцип единичной ответственности
+
+path = Path("C:\\") / "Users" / "Intel Core i7" / "PycharmProjects" / "tg-sandbox" / "telegram.db"
 
 
 class AbsModeHandler:
@@ -90,9 +92,34 @@ class PalindromeMode(AbsModeHandler):
         self.send_message(update, context, msg)
 
 
+class GreetingMode(AbsModeHandler):
+    @classmethod
+    def command(cls):
+        return "greeting"
+
+    def _get_message_handlers(self):
+        return (None, self.message_callback),
+
+    def message_callback(self, update: Update, context):
+        current_table = "users"
+        db_handler = DatabaseHandler(path)
+        user_data = update.effective_user
+        user_id = user_data["id"]
+
+        user_name = db_handler.get_username(current_table, user_id)
+
+        if user_name is None:
+            user_name = user_data["first_name"]
+            self.send_message(update, context, f"Hi! Are you {user_name})")
+            db_handler.insert(current_table, user_id, )
+        else:
+            pass
+
+
 class Modes(Enum):
     Anagram = AnagramMode
     Palindrome = PalindromeMode
+    Greeting = GreetingMode
 
     @property
     def command(self) -> str:
@@ -118,7 +145,9 @@ class Bot:
                                     Modes.Palindrome.command:
                                        lambda upt, ctx: self._switch_to_mode_callback(upt, ctx, Modes.Palindrome),
                                     Modes.Anagram.command:
-                                       lambda upt, ctx: self._switch_to_mode_callback(upt, ctx, Modes.Anagram)})
+                                       lambda upt, ctx: self._switch_to_mode_callback(upt, ctx, Modes.Anagram),
+                                    Modes.Greeting.command:
+                                       lambda upt, ctx: self._switch_to_mode_callback(upt, ctx, Modes.Greeting)})
         self._handlers = {}
         self._switch_to_mode(self.default_mode)
 
@@ -130,8 +159,7 @@ class Bot:
         tuple(self.dispatcher.add_handler(CommandHandler(command, func)) for command, func in callbacks.items())
 
     def start_callback(self, update: Update, context):
-        update.effective_chat.id
-        self.send_message(update, context, 'bot started')
+        self.send_message(update, context, f"bot started{update.effective_user}")
 
     def _switch_to_mode(self, mode):
         if self._mode in self._handlers:

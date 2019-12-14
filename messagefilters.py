@@ -21,3 +21,11 @@ class MessageFilters(object):
             return bool(message.text and message.text.startswith('$add'))
 
     add = _Add()
+
+    class _YesNo(BaseFilter):
+        name = 'MeFilters.YesNo'
+
+        def filter(self, message):
+            return bool(message.text and message.text == 'yes' or message.text == "no")
+
+    yesno = _YesNo
