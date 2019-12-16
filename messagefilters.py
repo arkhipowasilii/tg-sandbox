@@ -7,7 +7,7 @@ from telegram.ext import BaseFilter
 
 class MessageFilters(object):
     class _Text(BaseFilter):
-        name = 'MyFilters.text'
+        name = 'MessageFilters.text'
 
         def filter(self, message):
             return bool(message.text and not message.text.startswith('/') and not message.text.startswith('$add'))
@@ -15,7 +15,7 @@ class MessageFilters(object):
     text = _Text()
 
     class _Add(BaseFilter):
-        name = 'MyFilters.add'
+        name = 'MessageFilters.add'
 
         def filter(self, message):
             return bool(message.text and message.text.startswith('$add'))
@@ -23,9 +23,17 @@ class MessageFilters(object):
     add = _Add()
 
     class _YesNo(BaseFilter):
-        name = 'MeFilters.YesNo'
+        name = 'MessageFilters.YesNo'
 
         def filter(self, message):
-            return bool(message.text and message.text == 'yes' or message.text == "no")
+            return bool(message.text and (message.text.startswith('yes') or message.text.startswith("no")))
 
-    yesno = _YesNo
+    yesno = _YesNo()
+
+    class _ExceptYesNO(BaseFilter):
+        name = 'MessageFilters.ExceptYesNo'
+
+        def filter(self, message):
+            return bool(message.text and not message.text.startswith('yes') and not message.text.startswith("no"))
+
+    except_yesno = _ExceptYesNO()
