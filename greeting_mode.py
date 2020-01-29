@@ -42,8 +42,8 @@ class GreetingMode(AbsModeHandler):
         self.greeting(update, context, user_name)
 
     def greeting(self, update: Update, context, name: str):
-        kb = KeyboardBuilder
-        kb.button(data="palindrome", callback="/palindrome")
+        kb = KeyboardBuilder()
+        kb.button("---", "1")
         msg = f"Hi, {name}! Enter '/palindrome' to find palindrome." \
             f" Enter '/anagram' to find anagram, use '$add ... to add some words"
-        self.send_message(update, context, msg)
+        self.send_message(update, context, msg, reply_markup=kb.get())

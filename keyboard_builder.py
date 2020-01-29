@@ -5,7 +5,7 @@ from math import ceil
 
 class KeyboardBuilder:
     def __init__(self):
-        self._buttons = [List[List[Button]]] = [[]]
+        self._buttons: List[List[Button]] = [[]]
         self._inline_count = None
 
     def elements_in_line(self, count: int) -> [[Button]]:
@@ -13,6 +13,8 @@ class KeyboardBuilder:
         return self
 
     def button(self, data: Any, callback):
+        if self._inline_count is None:
+            self._inline_count = 1
         current_button = Button(text=data, callback_data=callback,)
         for line in self._buttons:
             if len(line) >= self._inline_count:

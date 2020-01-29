@@ -1,7 +1,7 @@
 from collections.abc import Callable
 from typing import Dict
-from telegram import Update, InlineKeyboardButton as Button, InlineKeyboardMarkup as Markup
-from telegram.ext import Updater, CommandHandler
+from telegram import Update, InlineKeyboardButton as Button, InlineKeyboardMarkup as Markup, Bot
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 from abs_mode_hanbler import AbsModeHandler
 from config import path
 from core import Core
@@ -62,12 +62,18 @@ class Bot:
                                         lambda upt, ctx: self._switch_to_mode_callback(upt, ctx, Modes.Anagram),
                                     Modes.Greeting.command:
                                         lambda upt, ctx: self._switch_to_mode_callback(upt, ctx, Modes.Greeting)})
+        self._disp.add_handler(CallbackQueryHandler(self.query_callback))
+
         self._handlers = {}
         self._switch_to_mode(self.default_mode)
 
     @property
     def dispatcher(self):
         return self._updater.dispatcher
+
+    def query_callback(self, bot: Bot,update: Update):
+        if update.message == "1":
+            print("x")
 
     def _add_command_handlers(self, callbacks: Dict[str, Callable]):
         tuple(self.dispatcher.add_handler(CommandHandler(command, func)) for command, func in callbacks.items())

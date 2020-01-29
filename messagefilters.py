@@ -7,24 +7,24 @@ from telegram.ext import BaseFilter
 exception_strings = ['/', '$']
 
 
+def decorator(func):
+    def wrapper(self, message):
+        for string in exception_strings:
+            if message.text.startswith(string):
+                return False
+        else:
+            func(self, message)
+    return wrapper
+
+
 class MessageFilters(object):
-
-    def decorator(self, func):
-        def wrapper(self, message):
-            for string in exception_strings:
-                if message.text.startswith(string):
-                    return False
-            else:
-                func(self, message)
-        return wrapper
-
     class _Text(BaseFilter):
         name = 'MessageFilters.text'
 
         def filter(self, message):
             return bool(message.text and not message.text.startswith('/'))
 
-    text = decorator(_Text.filter)
+    text = _Text()
 
     class _Add(BaseFilter):
         name = 'MessageFilters.add'

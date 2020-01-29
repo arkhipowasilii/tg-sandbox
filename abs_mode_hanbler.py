@@ -37,8 +37,11 @@ class AbsModeHandler:
             self.dispatcher.remove_handler(handler)
 
     @staticmethod
-    def send_message(update: Update, context, msg: str):
-        context.bot.send_message(chat_id=update.effective_chat.id, text=msg)
+    def send_message(update: Update, context, msg: str, reply_markup=None):
+        if reply_markup is None:
+            context.bot.send_message(chat_id=update.effective_chat.id, text=msg)
+        else:
+            context.bot.send_message(chat_id=update.effective_chat.id, text=msg, reply_markup=reply_markup)
 
     def add_message_handlers(self):
         for filter, callback in self._get_message_handlers():
