@@ -2,7 +2,6 @@ from collections.abc import Callable
 from typing import Dict
 from telegram import Update, InlineKeyboardButton as Button, InlineKeyboardMarkup as Markup
 from telegram.ext import Updater, CommandHandler
-
 from abs_mode_hanbler import AbsModeHandler
 from config import path
 from core import Core
@@ -13,6 +12,8 @@ from modes import Modes
 assert path.exists()
 
 # ToDo Keyboard Builder ; KeyboardMode ; Made save button click history in base: t_id, timestamp, button
+
+
 class KeyboardMode(AbsModeHandler):
     @classmethod
     def command(cls):
