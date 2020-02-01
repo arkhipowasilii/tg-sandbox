@@ -1,8 +1,7 @@
 from collections.abc import Callable
 from typing import Dict
-from telegram import Update, InlineKeyboardButton as Button, InlineKeyboardMarkup as Markup, Bot
+from telegram import Update
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
-from abs_mode_hanbler import AbsModeHandler
 from config import path
 from core import Core
 
@@ -10,38 +9,6 @@ from core import Core
 from modes import Modes
 
 assert path.exists()
-
-# ToDo Keyboard Builder ; KeyboardMode ; Made save button click history in base: t_id, timestamp, button
-
-
-class KeyboardMode(AbsModeHandler):
-    @classmethod
-    def command(cls):
-       return "kb"
-
-    def _get_message_handlers(self):
-        pass
-
-    def wrapper(self, func) -> str:
-        pass
-
-    def dewrapper(self, func: str) -> Callable:
-        pass
-
-    def greeting_callback(self, update, context):
-        keyboard = [[Button("Option 1", callback_data=self.wrapper(self.option_1_callback)),
-                     Button("Option 2", callback_data='2')],
-                    [Button("Option 3", callback_data='3')]]
-
-        reply_markup = Markup(keyboard)
-
-        update.message.reply_text('Please choose:', reply_markup=reply_markup)
-
-    def button_callback(self, update, context):
-        self.dewrapper(update.callback_query)(update, context)
-
-    def option_1_callback(self, update, context):
-        pass
 
 
 class Bot:
@@ -71,9 +38,11 @@ class Bot:
     def dispatcher(self):
         return self._updater.dispatcher
 
-    def query_callback(self, bot: Bot,update: Update):
-        if update.message == "1":
-            print("x")
+    def query_callback(self, update: Update, context):
+        callback_data = update.callback_query.data
+        for mode in Modes:
+            if callback_data == str(mode.name):
+                self._switch_to_mode_callback(update, context, mode)
 
     def _add_command_handlers(self, callbacks: Dict[str, Callable]):
         tuple(self.dispatcher.add_handler(CommandHandler(command, func)) for command, func in callbacks.items())

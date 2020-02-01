@@ -5,7 +5,7 @@ from telegram.ext import MessageHandler
 
 from config import path
 from core import Core
-from db import DatabaseHandler
+from service.db import DatabaseHandler
 
 
 class AbsModeHandler:
@@ -37,11 +37,11 @@ class AbsModeHandler:
             self.dispatcher.remove_handler(handler)
 
     @staticmethod
-    def send_message(update: Update, context, msg: str, reply_markup=None):
-        if reply_markup is None:
+    def send_message(update: Update, context, msg: str, markup=None):
+        if markup is None:
             context.bot.send_message(chat_id=update.effective_chat.id, text=msg)
         else:
-            context.bot.send_message(chat_id=update.effective_chat.id, text=msg, reply_markup=reply_markup)
+            context.bot.send_message(chat_id=update.effective_chat.id, text=msg, reply_markup=markup)
 
     def add_message_handlers(self):
         for filter, callback in self._get_message_handlers():

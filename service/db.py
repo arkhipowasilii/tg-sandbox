@@ -1,4 +1,5 @@
 import sqlite3 as sqlite
+from datetime import datetime
 from pathlib import Path
 from threading import Lock
 
@@ -36,3 +37,11 @@ class DatabaseHandler:
         self._connect.commit()
         return values
 
+class HistoryDatabaseHandler:
+    def __init__(self, path: Path):
+        self._path = path
+        self._connect = None
+        self._lock = Lock()
+
+    def insert(self, t_id: int, time: datetime, option: int):
+        pass

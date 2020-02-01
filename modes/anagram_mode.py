@@ -1,7 +1,7 @@
 from telegram import Update
 
-from abs_mode_hanbler import AbsModeHandler
-from messagefilters import MessageFilters
+from modes.abs_mode_hanbler import AbsModeHandler
+from service.messagefilters import MessageFilters
 
 
 class AnagramMode(AbsModeHandler):

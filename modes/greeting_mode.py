@@ -1,7 +1,7 @@
 from telegram import Update
-from keyboard_builder import KeyboardBuilder
-from abs_mode_hanbler import AbsModeHandler
-from messagefilters import MessageFilters
+from service.keyboard_builder import KeyboardBuilder
+from modes.abs_mode_hanbler import AbsModeHandler
+from service.messagefilters import MessageFilters
 
 
 class GreetingMode(AbsModeHandler):
@@ -43,7 +43,9 @@ class GreetingMode(AbsModeHandler):
 
     def greeting(self, update: Update, context, name: str):
         kb = KeyboardBuilder()
-        kb.button("---", "1")
+        kb.button("Find anagram", "Anagram")
+        kb.button("Find palindrome", "palindrome")
+        markup = kb.get()
         msg = f"Hi, {name}! Enter '/palindrome' to find palindrome." \
             f" Enter '/anagram' to find anagram, use '$add ... to add some words"
-        self.send_message(update, context, msg, reply_markup=kb.get())
+        self.send_message(update, context, msg, markup=markup)
