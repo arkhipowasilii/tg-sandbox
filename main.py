@@ -4,7 +4,7 @@ from bot import Bot
 from core import Core
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    level=logging.DEBUG)
+                   level=logging.DEBUG)
 
 
 def main(token):

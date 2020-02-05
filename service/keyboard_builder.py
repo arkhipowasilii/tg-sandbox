@@ -1,7 +1,7 @@
 from telegram import InlineKeyboardButton as Button, InlineKeyboardMarkup as Markup, KeyboardButton
 from typing import Callable, Any, Tuple, List, Optional
 from math import ceil
-
+import logging
 
 class KeyboardBuilder:
     def __init__(self):
@@ -14,6 +14,8 @@ class KeyboardBuilder:
 
     @classmethod
     def _serialize(csl, callback: Callable, args: Tuple[int]) -> str:
+        if args is None:
+            return f"{callback.__name__}"
         return f"{callback.__name__}|{','.join(tuple(map(str, args)))}"
 
     @staticmethod
@@ -28,11 +30,14 @@ class KeyboardBuilder:
 
         return getattr(owner, func), args
 
-    def button(self, data: Any, callback: Callable, args: Tuple[int]):
+    def button(self, data: Any, callback: (Optional[Callable], str), args: Tuple[int]=None):
         if self._inline_count is None:
             self._inline_count = 1
 
-        current_button = Button(text=data, callback_data=self._serialize(callback, args),)
+        if not isinstance(callback, str):
+            current_button = Button(text=data, callback_data=self._serialize(callback, args))
+        else:
+            current_button = Button(text=data, callback_data=callback)
 
         line = self._buttons[-1]
         if len(line) >= self._inline_count:

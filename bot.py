@@ -2,17 +2,17 @@ from collections.abc import Callable
 from typing import Dict
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
-from config import path
+from config import path_tg
 from core import Core
 
 # Принцип единичной ответственности
-from modes import Modes
+from modes.modes import Modes
 
-assert path.exists()
+assert path_tg.exists()
 
 
 class Bot:
-    default_mode = Modes.Greeting
+    default_mode = Modes.Keyboard
 
     def __init__(self, token: str, core: Core, mode: Modes = None):
         self._token = token
@@ -28,8 +28,9 @@ class Bot:
                                     Modes.Anagram.command:
                                         lambda upt, ctx: self._switch_to_mode_callback(upt, ctx, Modes.Anagram),
                                     Modes.Greeting.command:
-                                        lambda upt, ctx: self._switch_to_mode_callback(upt, ctx, Modes.Greeting)})
-        self._disp.add_handler(CallbackQueryHandler(self.query_callback))
+                                        lambda upt, ctx: self._switch_to_mode_callback(upt, ctx, Modes.Greeting),
+                                    Modes.Keyboard.command:
+                                        lambda upt, ctx: self._switch_to_mode_callback(upt, ctx, Modes.Keyboard)})
 
         self._handlers = {}
         self._switch_to_mode(self.default_mode)
@@ -43,7 +44,6 @@ class Bot:
         for mode in Modes:
             if callback_data == str(mode.name):
                 self._switch_to_mode_callback(update, context, mode)
-
     def _add_command_handlers(self, callbacks: Dict[str, Callable]):
         tuple(self.dispatcher.add_handler(CommandHandler(command, func)) for command, func in callbacks.items())
 

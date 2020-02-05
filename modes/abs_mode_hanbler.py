@@ -3,7 +3,7 @@ from abc import abstractmethod
 from telegram import Update
 from telegram.ext import MessageHandler
 
-from config import path
+from config import path_tg
 from core import Core
 from service.db import DatabaseHandler
 
@@ -14,7 +14,7 @@ class AbsModeHandler:
         self.dispatcher = dispatcher
         self.current_handlers = []
 
-        self.db_handler = DatabaseHandler(path)
+        self.db_handler = DatabaseHandler(path_tg)
         self.current_table = "users"
 
     def connect_handlers(self):
