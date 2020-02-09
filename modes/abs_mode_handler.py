@@ -38,10 +38,14 @@ class AbsModeHandler:
 
     @staticmethod
     def send_message(update: Update, context, msg: str, markup=None):
-        if markup is None:
-            context.bot.send_message(chat_id=update.effective_chat.id, text=msg)
-        else:
-            context.bot.send_message(chat_id=update.effective_chat.id, text=msg, reply_markup=markup)
+        context.bot.send_message(chat_id=update.effective_chat.id, text=msg, reply_markup=markup)
+
+    @staticmethod
+    def edit_message(update: Update, context, msg: str):
+        context.bot.edit_message_text(chat_id=update.effective_chat.id,
+                                      text=msg,
+                                      message_id=update.effective_message.message_id,
+                                      reply_markup=update.effective_message.reply_markup)
 
     def add_message_handlers(self):
         for filter, callback in self._get_message_handlers():

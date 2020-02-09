@@ -5,7 +5,7 @@ from telegram.ext import CallbackQueryHandler
 import logging
 
 from core import Core
-from modes.abs_mode_hanbler import AbsModeHandler
+from modes.abs_mode_handler import AbsModeHandler
 from config import path_history
 from service.messagefilters import MessageFilters
 
@@ -55,12 +55,13 @@ class KeyboardMode(AbsModeHandler):
             # ToDo Add logging for wrong callback
 
     def callback(self, update: Update, context, nums: List[int]):
-        self._db.insert(update.effective_user.id, datetime, nums)
+        self.edit_message(update, context, f"Last chosen\n {nums} Please choose: ")
+        self._db.insert(update.effective_user.id, datetime.now(), nums)
 
     def show_callback(self, update: Update, context, *args):
         # ToDo Show history from db with inline keyboard
         raw = self._db.get_history(update.effective_user.id)
-        self.send_message(update, context, f' date, button - {"|date, button - ".join(map(str, raw))}')
+        self.send_message(update, context, '\n'.join(f"b:{bt}, {dt.minute}:{dt.second}" for dt, bt in raw))
 
     def delete_history_callback(self, update: Update, context, *args):
         self._db.delete_history(update.effective_user.id)

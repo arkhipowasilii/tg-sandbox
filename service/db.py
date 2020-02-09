@@ -2,7 +2,7 @@ import sqlite3 as sqlite
 from datetime import datetime
 from pathlib import Path
 from threading import Lock
-from typing import List
+from typing import List, Tuple, Iterable
 
 
 def connect_dec(func):
@@ -47,10 +47,11 @@ class HistoryDatabaseHandler:
         self.table = 'history'
 
     @connect_dec
-    def insert(self, t_id: int, time: datetime, option: List[int]):
-        for num in option:
-            sql = f"INSERT INTO '{self.table}' VALUES ({t_id}, '{time.now()}', {num})"
-            self._connect.execute(sql)
+    def insert(self, t_id: int, time: datetime, options: List[int]):
+        options = ','.join(f"({t_id}, '{time}', {num})" for num in options)
+        sql = f"INSERT INTO '{self.table}' VALUES {options}"
+        print(sql)
+        self._connect.execute(sql)
 
     @connect_dec
     def add_table(self, table: str, values: str):
@@ -59,9 +60,9 @@ class HistoryDatabaseHandler:
         return values
 
     @connect_dec
-    def get_history(self, t_id: int):
+    def get_history(self, t_id: int) -> Iterable[Tuple[datetime, str]]:
         raw = self._connect.execute(f"SELECT datatime, button FROM '{self.table}' where t_id = {t_id}").fetchall()
-        return raw
+        return ((datetime.fromisoformat(dt), bt) for dt, bt in raw)
 
     @connect_dec
     def delete_history(self, t_id: int):
